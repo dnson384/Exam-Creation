@@ -1,14 +1,14 @@
-export interface LessonData {
-  id: string;
+export interface LessonPayload {
   name: string;
+  questionsCount: number;
   exerciseTypes: string[];
   difficultyLevels: string[];
   learningOutcomes: string[];
   questionTypes: string[];
 }
 
-export interface CategoryEntity {
-  id: string;
+export interface GenerateExamPayload {
+  title: string;
   chapter: string;
-  lessons: LessonData[];
+  lessons: LessonPayload[];
 }

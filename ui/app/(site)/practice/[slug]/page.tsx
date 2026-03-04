@@ -1,9 +1,9 @@
 "use client";
 import usePractice from "@/presentation/hooks/Practice/usePractice";
-import QuestionContent from "@/presentation/components/Practice/questionContent";
-import MultipleChoiceContent from "@/presentation/components/Practice/multipleChoiceContent";
-import TrueFalseContent from "@/presentation/components/Practice/trueFalseContent";
-import NavBar from "@/presentation/components/layout/navbar";
+import QuestionContent from "@/presentation/components/Practice/QuestionContent";
+import MultipleChoiceContent from "@/presentation/components/Practice/MultipleChoiceContent";
+import TrueFalseContent from "@/presentation/components/Practice/TrueFalseContent";
+import NavBar from "@/presentation/components/layout/NavBar";
 
 export default function Practice() {
   const { practice, questionsSorted, handleExportDocx } = usePractice();

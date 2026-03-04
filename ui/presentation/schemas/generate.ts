@@ -15,7 +15,7 @@ export const LessonsPayloadSchema = z.object({
     .min(1, "Vui lòng chọn ít nhất 1 dạng câu hỏi"),
 });
 
-export const GeneratePracticePayloadSchema = z.object({
+export const GeneratePayloadSchema = z.object({
   title: z.string({ error: "Tiêu đề không được để trống" }),
   chapter: z.string({
     error: "Chương không được để trống",
@@ -24,6 +24,4 @@ export const GeneratePracticePayloadSchema = z.object({
 });
 
 export type LessonsPayload = z.infer<typeof LessonsPayloadSchema>;
-export type GeneratePracticePayload = z.infer<
-  typeof GeneratePracticePayloadSchema
->;
+export type GeneratePayloadSchema = z.infer<typeof GeneratePayloadSchema>;

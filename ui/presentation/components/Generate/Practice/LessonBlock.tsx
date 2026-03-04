@@ -1,8 +1,8 @@
 import { LessonData } from "@/domain/entities/category.entity";
 import { Dispatch, SetStateAction, ChangeEvent, useState } from "react";
-import LessonSelect from "../Category/lessonSelect";
+import LessonSelect from "../../Category/LessonSelect";
 import { LessonPayload } from "@/domain/entities/generatePractice.entity";
-import LessonOptionSelect from "../Category/lessonOptionSelect";
+import LessonOptionSelect from "../../Category/LessonOptionSelect";
 
 interface LessonBlockData {
   lesson: LessonPayload;
@@ -18,6 +18,7 @@ interface LessonBlockData {
   ): void;
   handleAddLesson(): void;
 }
+
 export default function LessonBlock({
   lesson,
   selectedLessons,

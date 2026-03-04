@@ -1,3 +1,3 @@
 export interface IUploadDocxFileRepository {
-  uploadDocxFile(file: FormData): Promise<boolean>;
+  uploadDocxFile(subject: string, formData: FormData): Promise<boolean>;
 }

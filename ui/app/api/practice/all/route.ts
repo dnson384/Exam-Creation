@@ -11,10 +11,10 @@ export async function GET(req: NextRequest) {
     const response = await usecase.execute();
     return NextResponse.json(response, { status: 200 });
   } catch (err) {
-    if (isAxiosError(err)) {
+    if (isAxiosError(err) && err.response) {
       return NextResponse.json(
-        { message: err.response?.data.message },
-        { status: err.status },
+        { message: err.response.data.message },
+        { status: err.response.status },
       );
     }
     return NextResponse.json({ message: "Lỗi Server" }, { status: 500 });

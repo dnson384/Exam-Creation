@@ -1,9 +1,7 @@
 import {
   ExportPayload,
-  QuestionExport,
 } from "@/domain/entities/practice.entity";
 import { LessonExportPayload } from "./../../../../presentation/schemas/exportPractice.schema";
-import axios from "axios";
 import { NextRequest, NextResponse } from "next/server";
 import { PracticeRepositoryImpl } from "@/infrastructure/repositories/practiceRepositoryImpl";
 import { ExportWordFileUsecase } from "@/application/usecases/practice/exportWordFile";

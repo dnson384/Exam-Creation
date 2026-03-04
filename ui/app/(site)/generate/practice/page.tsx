@@ -1,8 +1,8 @@
 "use client";
 
-import ChapterSelect from "@/presentation/components/Category/chapterSelect";
-import LessonBlock from "@/presentation/components/Generate-Practice/LessonBlock";
-import NavBar from "@/presentation/components/layout/navbar";
+import ChapterSelect from "@/presentation/components/Category/ChapterSelect";
+import LessonBlock from "@/presentation/components/Generate/Practice/LessonBlock";
+import NavBar from "@/presentation/components/layout/NavBar";
 import useCategory from "@/presentation/hooks/Generate/useCategory";
 import useGeneratePractice from "@/presentation/hooks/Generate/Practice/useGeneratePractice";
 

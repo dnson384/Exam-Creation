@@ -1,44 +1,22 @@
 import { PracticeEntity } from "@/domain/entities/practice.entity";
 import { getAllPracticesService } from "@/presentation/services/practice.service";
-import { isAxiosError } from "axios";
-import { usePathname } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { AxiosError } from "axios";
 
 export default function useAllPractices() {
-  const pathname = usePathname();
+  const {
+    data: practices = [],
+    isLoading,
+    error,
+  } = useQuery<PracticeEntity[], AxiosError<any>>({
+    queryKey: ["categories"],
+    queryFn: getAllPracticesService,
+    staleTime: 1000 * 60 * 5,
+    retry: false,
+    refetchOnWindowFocus: false,
+  });
 
-  const [practices, setPractices] = useState<PracticeEntity[]>([]);
-  const [error, setError] = useState<string | null>(null);
+  const errorMessage: string | undefined = error?.response?.data.message;
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response: PracticeEntity[] = await getAllPracticesService();
-
-        setPractices((prev) => {
-          const newPractices = [...prev];
-          response.map((practice) => [
-            ...newPractices,
-            {
-              id: practice.id,
-              title: practice.title,
-              chapter: practice.chapter,
-              questionsCount: practice.questionsCount,
-              questionsId: practice.questionsId,
-            },
-          ]);
-          return newPractices;
-        });
-      } catch (error: any) {
-        if (isAxiosError(error)) {
-          setError(error.response?.data.message);
-        } else {
-          console.log("Lỗi hệ thống");
-        }
-      }
-    };
-    fetchData();
-  }, []);
-
-  return { practices, error };
+  return { practices, isLoading, errorMessage };
 }

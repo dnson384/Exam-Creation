@@ -2,7 +2,7 @@ import { isAxiosError } from "axios";
 import { NextRequest, NextResponse } from "next/server";
 
 import { GeneratePracticePayload } from "@/domain/entities/generatePractice.entity";
-import { GeneratePracticePayloadSchema } from "@/presentation/schemas/generatePractice.schema";
+import { GeneratePayloadSchema } from "@/presentation/schemas/generate";
 import { QuestionRepositoryImpl } from "@/infrastructure/repositories/questionRepositoryImpl";
 import { GeneratePracticeUsecase } from "@/application/usecases/question/generate-practice";
 
@@ -10,7 +10,7 @@ export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
 
-    const validationResult = GeneratePracticePayloadSchema.safeParse(body);
+    const validationResult = GeneratePayloadSchema.safeParse(body);
     if (!validationResult.success) {
       return NextResponse.json(
         {

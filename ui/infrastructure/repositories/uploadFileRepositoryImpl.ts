@@ -11,7 +11,11 @@ export class UploadDocxFileRepositoryImpl implements IUploadDocxFileRepository {
         : process.env.NEXT_PUBLIC_BACKEND_PROD_URL!;
   }
 
-  async uploadDocxFile(formData: FormData): Promise<boolean> {
+  async uploadDocxFile(subject: string, formData: FormData): Promise<boolean> {
+    if (!formData.has("subject")) {
+      formData.append("subject", subject);
+    }
+    
     const { data } = await axios.post<boolean>(
       `${this.baseUrl}/importer/parse`,
       formData,

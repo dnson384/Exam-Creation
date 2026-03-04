@@ -1,9 +1,9 @@
 import { LessonData } from "@/domain/entities/category.entity";
 import { LessonPayload } from "@/domain/entities/generatePractice.entity";
 import {
-  GeneratePracticePayload,
+  GeneratePayloadSchema,
   LessonsPayload,
-} from "@/presentation/schemas/generatePractice.schema";
+} from "@/presentation/schemas/generate";
 import { generatePracticeService } from "@/presentation/services/question.service";
 import { useRouter } from "next/navigation";
 import { ChangeEvent, useEffect, useState } from "react";
@@ -119,7 +119,7 @@ export default function useGeneratePractice() {
       setError("Chương chưa được chọn");
       return;
     }
-    console.log(selectedLessons)
+    console.log(selectedLessons);
 
     const lessonsError = selectedLessons.some((lesson) => {
       if (lesson.name.trim().length === 0) {
@@ -155,7 +155,7 @@ export default function useGeneratePractice() {
         }),
       );
 
-      const payload: GeneratePracticePayload = {
+      const payload: GeneratePayloadSchema = {
         title: practiceTitle,
         chapter: selectedChapter,
         lessons: lessonsPayload,

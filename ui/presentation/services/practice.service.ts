@@ -2,7 +2,7 @@ import {
   PracticeDetailEntity,
   PracticeEntity,
 } from "@/domain/entities/practice.entity";
-import axios from "axios";
+import axios, { isAxiosError } from "axios";
 import { LessonExportPayload } from "../schemas/exportPractice.schema";
 
 export async function getAllPracticesService(): Promise<PracticeEntity[]> {
