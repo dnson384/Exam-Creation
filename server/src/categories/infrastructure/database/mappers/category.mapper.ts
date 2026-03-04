@@ -5,6 +5,7 @@ export class CategoryMapper {
   static toDomain(raw: CategoriesDocument): CategoryEntity {
     return new CategoryEntity({
       id: raw._id.toString(),
+      subject: raw.subject,
       chapter: raw.chapter,
       lessons: raw.lessons,
     });
@@ -12,6 +13,7 @@ export class CategoryMapper {
 
   static toSchema(entity: CategoryEntity): Partial<Categories> {
     return {
+      subject: entity.subject,
       chapter: entity.chapter,
       lessons: entity.lessons,
     };

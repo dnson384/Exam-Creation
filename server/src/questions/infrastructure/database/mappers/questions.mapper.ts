@@ -1,5 +1,5 @@
 import { QuestionEntity } from 'src/questions/domain/entities/question.entity';
-import { Questions, QuestionsDocument } from '../models/questions.model';
+import { Questions, QuestionsDocument } from '../schemas/questions.schema';
 
 export class QuestionMapper {
   static toDomain(raw: QuestionsDocument): QuestionEntity {
@@ -21,6 +21,7 @@ export class QuestionMapper {
 
   static toSchema(entity: QuestionEntity): Partial<Questions> {
     return {
+      subject: entity.subject,
       chapter: entity.chapter,
       lesson: entity.lesson,
       exerciseType: entity.exerciseType,

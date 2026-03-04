@@ -1,9 +1,9 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { HydratedDocument } from 'mongoose';
+import { HydratedDocument, Types } from 'mongoose';
 
 export type CategoriesDocument = HydratedDocument<Categories>;
 
-@Schema({ _id: false })
+@Schema()
 export class LessonData {
   @Prop({ required: true })
   name: string;
@@ -24,6 +24,9 @@ const LessonDataSchema = SchemaFactory.createForClass(LessonData);
 
 @Schema({ collection: 'Categories', timestamps: true })
 export class Categories {
+  @Prop({ required: true })
+  subject: string;
+
   @Prop({ required: true })
   chapter: string;
 

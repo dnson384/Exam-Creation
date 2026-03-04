@@ -10,6 +10,7 @@ import { join } from 'path';
 
 import { ImporterModule } from './importer/importer.module';
 import { ExporterModule } from './exporter/exporter.module';
+import { DraftModule } from './draftGenerate/drafts.module';
 
 @Module({
   imports: [
@@ -42,7 +43,8 @@ import { ExporterModule } from './exporter/exporter.module';
       serveRoot: '/static',
     }),
     ImporterModule,
-    ExporterModule
+    ExporterModule,
+    DraftModule,
   ],
 })
 export class AppModule {}

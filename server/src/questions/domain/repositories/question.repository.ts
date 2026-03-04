@@ -5,7 +5,7 @@ import {
 
 export abstract class IQuestionRepository {
   abstract saveQuestions(questions: QuestionEntity[]): Promise<boolean>;
-  abstract getPractice(
+  abstract getPracticeQuestions(
     title: string,
     chapter: string,
     lessons: LessonPayloadEntity[],

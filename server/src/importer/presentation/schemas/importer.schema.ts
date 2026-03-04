@@ -1,3 +1,4 @@
-export class ParseDocxInput {
+export class ParseDocxPayload {
+  subject: string
   file: FormData
 }

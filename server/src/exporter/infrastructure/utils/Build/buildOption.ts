@@ -5,13 +5,9 @@ import {
   HeightRule,
   ImageRun,
   Paragraph,
-  Tab,
   Table,
   TableCell,
-  TableLayoutType,
   TableRow,
-  TabStopPosition,
-  TabStopType,
   TextRun,
   VerticalAlign,
   WidthType,
@@ -58,7 +54,7 @@ export function BuildOption(
         bold: true,
       }),
     );
-  } else if (questionType === 'Đúng sai') {
+  } else {
     questionsNode.push(
       new TextRun({
         text: `${String.fromCharCode(97 + index)}. `,
@@ -169,6 +165,17 @@ export function BuildOption(
                 // Cột 2
                 new TableCell({
                   width: { size: boxWidth, type: WidthType.DXA },
+                  borders: noBorders,
+                  children: [
+                    new Paragraph({
+                      text: '',
+                      alignment: AlignmentType.CENTER,
+                    }),
+                  ],
+                }),
+                // Cột 3
+                new TableCell({
+                  width: { size: boxWidth, type: WidthType.DXA },
                   borders: allBorders,
                   children: [
                     new Paragraph({
@@ -178,18 +185,18 @@ export function BuildOption(
                   ],
                   verticalAlign: VerticalAlign.CENTER,
                 }),
-                // Cột 3
+                // Cột 4
                 new TableCell({
                   width: { size: boxWidth, type: WidthType.DXA },
                   borders: allBorders,
                   children: [
                     new Paragraph({
-                      text: '\u00A0',
+                      text: '',
                       alignment: AlignmentType.CENTER,
                     }),
                   ],
                 }),
-                // Cột 4: Ô S
+                // Cột 5
                 new TableCell({
                   width: { size: boxWidth, type: WidthType.DXA },
                   borders: allBorders,

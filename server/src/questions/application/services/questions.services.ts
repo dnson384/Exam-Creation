@@ -10,6 +10,7 @@ export class QuestionsServices {
   async insert(questions: NewQuestionDTO[]): Promise<boolean> {
     const newQuestionsEntity: QuestionEntity[] = questions.map((question) => {
       return new QuestionEntity({
+        subject: question.subject,
         chapter: question.chapter,
         lesson: question.lesson,
         exerciseType: question.exerciseType,

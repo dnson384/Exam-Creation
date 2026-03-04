@@ -16,6 +16,7 @@ export class OptionsData {
 
 export class QuestionEntity {
   id?: string;
+  subject: string;
   chapter: string;
   lesson: string;
   exerciseType: string;

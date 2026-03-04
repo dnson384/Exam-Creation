@@ -15,6 +15,7 @@ export interface OptionsDataDTO {
 }
 
 export interface NewQuestionDTO {
+  subject: string,
   chapter: string;
   lesson: string;
   exerciseType: string;

@@ -10,22 +10,6 @@ import { IQuestionRepository } from '../domain/repositories/question.repository'
 export class QuestionsUseCase {
   constructor(private readonly repo: IQuestionRepository) {}
 
-  async insert(questions: NewQuestionDTO[]): Promise<boolean> {
-    const newQuestionsEntity: QuestionEntity[] = questions.map((question) => {
-      return new QuestionEntity({
-        chapter: question.chapter,
-        lesson: question.lesson,
-        exerciseType: question.exerciseType,
-        difficultyLevel: question.difficultyLevel,
-        learningOutcomes: question.learningOutcomes,
-        questionType: question.questionType,
-        question: question.question,
-        options: question.options,
-      });
-    });
-    return await this.repo.saveQuestions(newQuestionsEntity);
-  }
-
   async generatePractice(
     title: string,
     chapter: string,
@@ -43,6 +27,10 @@ export class QuestionsUseCase {
         }),
     );
 
-    return await this.repo.getPractice(title, chapter, lessonsPayloadEntity);
+    return await this.repo.getPracticeQuestions(
+      title,
+      chapter,
+      lessonsPayloadEntity,
+    );
   }
 }

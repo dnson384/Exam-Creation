@@ -6,7 +6,7 @@ import {
 import { IQuestionRepository } from 'src/questions/domain/repositories/question.repository';
 
 import { QuestionMapper } from '../mappers/questions.mapper';
-import { Questions, QuestionsDocument } from '../models/questions.model';
+import { Questions, QuestionsDocument } from '../schemas/questions.schema';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { NewPracticeDTO } from 'src/practices/application/dtos/practices.dto';
@@ -28,7 +28,7 @@ export class QuestionRepository implements IQuestionRepository {
     return true;
   }
 
-  async getPractice(
+  async getPracticeQuestions(
     title: string,
     chapter: string,
     lessons: LessonPayloadEntity[],

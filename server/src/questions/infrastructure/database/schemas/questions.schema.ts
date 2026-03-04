@@ -46,6 +46,9 @@ const OptionsSchema = SchemaFactory.createForClass(Options);
 @Schema({ collection: 'Questions', timestamps: true })
 export class Questions {
   @Prop({ required: true })
+  subject: string;
+
+  @Prop({ required: true })
   chapter: string;
 
   @Prop({ required: true })

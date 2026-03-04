@@ -9,6 +9,7 @@ export class CategoriesServices {
 
   async insert(category: NewCategoryDTO): Promise<boolean> {
     const newCategoryEntity = new CategoryEntity({
+      subject: category.subject,
       chapter: category.chapter,
       lessons: category.lessons,
     });

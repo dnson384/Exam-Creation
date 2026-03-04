@@ -1,4 +1,5 @@
 export class LessonData {
+  id?: string;
   name: string;
   exerciseTypes: string[];
   difficultyLevels: string[];
@@ -8,6 +9,7 @@ export class LessonData {
 
 export class CategoryEntity {
   id?: string;
+  subject: string;
   chapter: string;
   lessons: LessonData[];
   createdAt?: Date;

@@ -6,7 +6,7 @@ import { PracticeRepository } from './infrastructure/repositories/practice.repos
 import {
   Practices,
   PracticesSchema,
-} from './infrastructure/models/practice.model';
+} from './infrastructure/schemas/practice.schema';
 import { PracticesController } from './presentation/practices.controller';
 import { PracticesUseCase } from './application/practices.usecase';
 

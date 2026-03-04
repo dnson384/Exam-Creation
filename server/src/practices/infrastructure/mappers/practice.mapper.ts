@@ -1,5 +1,5 @@
 import { Types } from 'mongoose';
-import { Practices, PracticesDocument } from '../models/practice.model';
+import { Practices, PracticesDocument } from '../schemas/practice.schema';
 import { PracticeEntity } from 'src/practices/domain/entities/practice.entity';
 
 export class PracticeMapper {

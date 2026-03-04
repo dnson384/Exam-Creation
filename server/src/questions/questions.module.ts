@@ -5,7 +5,7 @@ import { MongooseModule } from '@nestjs/mongoose';
 import {
   Questions,
   QuestionsSchema,
-} from './infrastructure/database/models/questions.model';
+} from './infrastructure/database/schemas/questions.schema';
 import { IQuestionRepository } from './domain/repositories/question.repository';
 import { QuestionRepository } from './infrastructure/database/repositories/questions.repository';
 import { QuestionsServices } from './application/services/questions.services';

@@ -3,6 +3,7 @@ import {
   Post,
   UploadedFile,
   UseInterceptors,
+  Body,
 } from '@nestjs/common';
 import { ImporterUseCase } from '../application/importer.usecase';
 import { FileInterceptor } from '@nestjs/platform-express';
@@ -13,7 +14,10 @@ export class ImporterController {
 
   @Post('parse')
   @UseInterceptors(FileInterceptor('file'))
-  async parseDocx(@UploadedFile() file: Express.Multer.File) {
-    return await this.importUseCase.execute(file.buffer);
+  async parseDocx(
+    @UploadedFile() file: Express.Multer.File,
+    @Body('subject') subject: string,
+  ) {
+    return await this.importUseCase.execute(file.buffer, subject);
   }
 }

@@ -13,11 +13,14 @@ export class ImporterUseCase {
     private readonly fileParser: IFileParser,
   ) {}
 
-  async execute(fileBuffer: Buffer): Promise<boolean> {
+  async execute(fileBuffer: Buffer, subject: string): Promise<boolean> {
+    if (subject.trim().length === 0) throw new Error('Không tồn tại môn học');
     if (!fileBuffer) throw new Error('File không tồn tại');
+
     const { questions, category } = await this.fileParser.parse(fileBuffer);
 
     const newQuestionsDTO: NewQuestionDTO[] = questions.map((question) => ({
+      subject: subject,
       chapter: question.chapter,
       lesson: question.lesson,
       exerciseType: question.exerciseType,
@@ -29,10 +32,11 @@ export class ImporterUseCase {
     }));
 
     const newCategoryDTO: NewCategoryDTO = {
+      subject: subject,
       chapter: category.chapter,
       lessons: category.lessons,
     };
-    
+
     return (
       (await this.questionsServices.insert(newQuestionsDTO)) &&
       (await this.categoriesServices.insert(newCategoryDTO))
