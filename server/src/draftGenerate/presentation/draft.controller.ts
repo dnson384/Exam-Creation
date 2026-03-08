@@ -3,10 +3,12 @@ import { DraftsUsecase } from '../application/draft.usecase';
 import type {
   CreateDraftPayload,
   UpdateDraftChaptersPayload,
+  UpdateDraftLessonsPayload,
 } from './schemas/draft.schema';
 import {
   CreateDraftDTO,
   UpdateChaptersDraftPayloadDTO,
+  UpdateLessonsDraftPayloadDTO,
 } from '../application/dto/draft.dto';
 
 @Controller('draft')
@@ -37,5 +39,17 @@ export class DraftController {
     };
 
     return await this.usecase.updateChapters(dto);
+  }
+
+  @Put('lesson')
+  async updateLessons(@Body() payload: UpdateDraftLessonsPayload) {
+    const dto: UpdateLessonsDraftPayloadDTO = {
+      draftId: payload.draftId,
+      chapterId: payload.chapterId,
+      add: payload.add,
+      del: payload.del,
+    };
+
+    return await this.usecase.updateLessons(dto);
   }
 }

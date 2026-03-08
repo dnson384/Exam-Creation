@@ -32,3 +32,10 @@ export interface UpdateChaptersDraftPayloadDTO {
   add: UpdateChapterParamPayloadDTO[];
   del: string[];
 }
+
+export interface UpdateLessonsDraftPayloadDTO {
+  draftId: string;
+  chapterId: string;
+  add: UpdateChapterParamPayloadDTO[];
+  del: string[];
+}

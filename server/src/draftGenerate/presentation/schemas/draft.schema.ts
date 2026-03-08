@@ -32,3 +32,10 @@ export interface UpdateDraftChaptersPayload {
   add: UpdateChapterParamPayload[];
   del: string[];
 }
+
+export interface UpdateDraftLessonsPayload {
+  draftId: string;
+  chapterId: string;
+  add: UpdateChapterParamPayload[];
+  del: string[];
+}

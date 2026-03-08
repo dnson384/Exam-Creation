@@ -35,8 +35,8 @@ export class CategoriesRepository implements ICategoriesRepository {
     const isExistedLesson = existedChapter.lessons.some(
       (lesson) => lesson.name === category.lessons[0].name,
     );
-    if (isExistedLesson) {
-      existedChapter.lessons.push(categorySchema.lessons!![0]);
+    if (!isExistedLesson) {
+      existedChapter.lessons.push(categorySchema.lessons![0]);
       await existedChapter.save();
     }
     return {

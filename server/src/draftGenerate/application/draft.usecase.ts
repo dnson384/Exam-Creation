@@ -1,9 +1,14 @@
 import { Injectable } from '@nestjs/common';
 import { IDraftsRepository } from '../domain/repositories/draft.repository';
-import { CreateDraftDTO, UpdateChaptersDraftPayloadDTO } from './dto/draft.dto';
+import {
+  CreateDraftDTO,
+  UpdateChaptersDraftPayloadDTO,
+  UpdateLessonsDraftPayloadDTO,
+} from './dto/draft.dto';
 import {
   DraftEntity,
   UpdateChaptersEntity,
+  UpdateLessonsEntity,
 } from '../domain/entities/draft.entity';
 
 @Injectable()
@@ -33,5 +38,16 @@ export class DraftsUsecase {
     });
 
     return await this.repo.updateChapters(payloadDomain);
+  }
+
+  async updateLessons(payload: UpdateLessonsDraftPayloadDTO): Promise<boolean> {
+    const payloadDomain: UpdateLessonsEntity = new UpdateLessonsEntity({
+      draftId: payload.draftId,
+      chapterId: payload.chapterId,
+      add: payload.add,
+      del: payload.del,
+    });
+
+    return await this.repo.updateLessons(payloadDomain);
   }
 }

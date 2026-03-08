@@ -17,9 +17,16 @@ export class DraftMapper {
     let chaptersData: Record<string, ChapterDraft> = {};
 
     for (const [chapterId, chapterData] of rawContent.content) {
-      let lessons = {};
+      let lessons: Record<string, LessonDraft> = {};
       for (const [lesssonId, lessonData] of chapterData.lessons) {
+        lessons[lesssonId] = {
+          id: lessonData.id.toString(),
+          name: lessonData.name,
+          matrix: lessonData.matrix,
+          matrixDetails: lessonData.matrixDetails,
+        };
       }
+      
       chaptersData[chapterId] = {
         id: chapterData.id.toString(),
         name: chapterData.name,

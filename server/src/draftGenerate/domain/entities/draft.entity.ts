@@ -59,3 +59,14 @@ export class UpdateChaptersEntity {
     Object.assign(this, props);
   }
 }
+
+export class UpdateLessonsEntity {
+  draftId: string;
+  chapterId: string;
+  add: UpdateChapterParamEntity[];
+  del: string[];
+
+  constructor(props: Partial<UpdateLessonsEntity>) {
+    Object.assign(this, props);
+  }
+}

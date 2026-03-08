@@ -6,6 +6,7 @@ import { Model, Types } from 'mongoose';
 import {
   DraftEntity,
   UpdateChaptersEntity,
+  UpdateLessonsEntity,
 } from 'src/draftGenerate/domain/entities/draft.entity';
 import { DraftMapper } from '../mappers/draft.mapper';
 
@@ -64,6 +65,49 @@ export class DraftsRepository implements IDraftsRepository {
 
     const result = await this.draftModel.updateOne(
       { _id: payload.draftId },
+      updateQuery,
+    );
+
+    return result.modifiedCount > 0;
+  }
+
+  async updateLessons(payload: UpdateLessonsEntity): Promise<boolean> {
+    const updateQuery: Record<string, any> = {};
+
+    // Thêm
+    if (payload.add && payload.add.length > 0) {
+      const setOps: Record<string, any> = {};
+      payload.add.forEach((lesson) => {
+        setOps[`content.${payload.chapterId}.lessons.${lesson.id}`] = {
+          id: new Types.ObjectId(lesson.id),
+          name: lesson.name,
+          matrix: {},
+          matrixDetails: {},
+        };
+      });
+
+      updateQuery['$set'] = setOps;
+    }
+
+    // Xoá
+    if (payload.del && payload.del.length > 0) {
+      const unsetOps: Record<string, any> = {};
+      payload.del.forEach((lessonId) => {
+        unsetOps[`content.${payload.chapterId}.lessons.${lessonId}`] = 1;
+      });
+
+      updateQuery['$unset'] = unsetOps;
+    }
+
+    if (!updateQuery.$set && !updateQuery.$unset) {
+      return false;
+    }
+
+    const result = await this.draftModel.updateOne(
+      {
+        _id: payload.draftId,
+        [`content.${payload.chapterId}`]: { $exists: true },
+      },
       updateQuery,
     );
 

@@ -28,8 +28,6 @@ export class ImporterUseCase {
     const { chapterId, lessonId } =
       await this.categoriesServices.insert(newCategoryDTO);
 
-    console.log(chapterId, lessonId)
-
     const newQuestionsDTO: NewQuestionDTO[] = questions.map((question) => ({
       subject: subject,
       chapterId: chapterId,
