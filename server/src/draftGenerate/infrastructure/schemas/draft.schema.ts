@@ -3,7 +3,7 @@ import { HydratedDocument, SchemaTypes, Types } from 'mongoose';
 
 export type DraftDocument = HydratedDocument<Drafts>;
 
-@Schema({ _id: false })
+@Schema({ _id: false, minimize: false })
 export class LessonDraftSch {
   @Prop({
     type: SchemaTypes.ObjectId,
@@ -17,7 +17,7 @@ export class LessonDraftSch {
   @Prop({ type: Object, default: {} })
   matrix: Record<string, Record<string, number>>;
 
-  @Prop({ type: Map, of: SchemaTypes.Mixed, default: {} })
+  @Prop({ type: Object, default: {} })
   matrixDetails: Record<string, Record<string, Record<string, number>>>;
 }
 const LessonDraftSchema = SchemaFactory.createForClass(LessonDraftSch);
@@ -33,8 +33,8 @@ export class ChapterDraftSch {
   @Prop({ required: true })
   name: string;
 
-  @Prop({ type: Map, of: LessonDraftSchema, default: {} })
-  lessons: Map<string, LessonDraftSch>;
+  @Prop({ type: [LessonDraftSchema], default: {} })
+  lessons: LessonDraftSch[];
 }
 const ChapterDraftSchema = SchemaFactory.createForClass(ChapterDraftSch);
 
@@ -46,7 +46,7 @@ export class Drafts {
   @Prop({ type: [String], required: true })
   questionTypes: string[];
 
-  @Prop({ type: Map, of: ChapterDraftSchema, default: {} })
-  content: Map<string, ChapterDraftSch>;
+  @Prop({ type: [ChapterDraftSchema], default: [] })
+  chapters: ChapterDraftSch[];
 }
 export const DraftSchema = SchemaFactory.createForClass(Drafts);

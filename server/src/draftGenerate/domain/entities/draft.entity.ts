@@ -14,16 +14,14 @@ export class LessonDraft {
 export class ChapterDraft {
   id: string;
   name: string;
-  lessons: { [lessonId: string]: LessonDraft };
+  lessons: LessonDraft[];
 }
 
 export class DraftEntity {
   id?: string;
   questionsCount: number;
   questionTypes: string[];
-  content: {
-    [chapterId: string]: ChapterDraft;
-  };
+  chapters: ChapterDraft[];
   createAt?: Date;
   expiredAt?: Date;
 
@@ -39,8 +37,8 @@ export class DraftEntity {
       ];
     }
 
-    if (!this.content) {
-      this.content = {};
+    if (!this.chapters) {
+      this.chapters = [];
     }
   }
 }

@@ -14,68 +14,49 @@ import { Types } from 'mongoose';
 export class DraftMapper {
   static toDomain(raw: DraftDocument): DraftEntity {
     const rawContent = raw.toObject();
-    let chaptersData: Record<string, ChapterDraft> = {};
 
-    for (const [chapterId, chapterData] of rawContent.content) {
-      let lessons: Record<string, LessonDraft> = {};
-      for (const [lesssonId, lessonData] of chapterData.lessons) {
-        lessons[lesssonId] = {
-          id: lessonData.id.toString(),
-          name: lessonData.name,
-          matrix: lessonData.matrix,
-          matrixDetails: lessonData.matrixDetails,
-        };
-      }
-      
-      chaptersData[chapterId] = {
-        id: chapterData.id.toString(),
-        name: chapterData.name,
-        lessons: lessons,
+    const chapterDomain: ChapterDraft[] = rawContent.chapters.map((chapter) => {
+      let lessonsDomain: LessonDraft[] = chapter.lessons.map((lesson) => ({
+        id: lesson.id.toString(),
+        name: lesson.name,
+        matrix: lesson.matrix,
+        matrixDetails: lesson.matrixDetails,
+      }));
+      return {
+        id: chapter.id.toString(),
+        name: chapter.name,
+        lessons: lessonsDomain,
       };
-    }
+    });
 
     return {
       id: rawContent._id.toString(),
       questionsCount: rawContent.questionsCount,
       questionTypes: rawContent.questionTypes,
-      content: chaptersData,
+      chapters: chapterDomain,
     };
   }
 
   static toSchema(entity: DraftEntity): Partial<Drafts> {
-    const mapLessonsToSchema = (lessonsObj: {
-      [lessonId: string]: LessonDraft;
-    }) => {
-      const lessonsMap = new Map<string, LessonDraftSch>();
+    const chaptersSchema: ChapterDraftSch[] = entity.chapters.map((chapter) => {
+      const lessonsSchema: LessonDraftSch[] = chapter.lessons.map((lesson) => ({
+        id: new Types.ObjectId(lesson.id),
+        name: lesson.name,
+        matrix: lesson.matrix,
+        matrixDetails: lesson.matrixDetails,
+      }));
 
-      Object.entries(lessonsObj).forEach(([lessonId, lessonContent]) => {
-        lessonsMap.set(lessonId, {
-          id: new Types.ObjectId(lessonContent.id),
-          name: lessonContent.name,
-          matrix: lessonContent.matrix,
-          matrixDetails: lessonContent.matrixDetails,
-        });
-      });
-
-      return lessonsMap;
-    };
-
-    const contentMap = new Map<string, ChapterDraftSch>();
-
-    if (entity.content) {
-      Object.entries(entity.content).forEach(([chapterId, chapterContent]) => {
-        contentMap.set(chapterId, {
-          id: new Types.ObjectId(chapterContent.id),
-          name: chapterContent.name,
-          lessons: mapLessonsToSchema(chapterContent.lessons),
-        });
-      });
-    }
+      return {
+        id: new Types.ObjectId(chapter.id),
+        name: chapter.name,
+        lessons: lessonsSchema,
+      };
+    });
 
     return {
       questionsCount: entity.questionsCount,
       questionTypes: entity.questionTypes,
-      content: contentMap,
+      chapters: chaptersSchema,
     };
   }
 }

@@ -38,5 +38,6 @@ export default function splitLevels(
     result[level]++;
   }
 
+
   return result;
 }

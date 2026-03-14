@@ -34,33 +34,40 @@ export class DraftsRepository implements IDraftsRepository {
   }
 
   async updateChapters(payload: UpdateChaptersEntity): Promise<boolean> {
+    const draft = await this.getDraft(payload.draftId);
+
+    if (!draft) throw new NotFoundException('Bản nháp không tồn tại');
+
+    const chapterIds = draft.chapters.map((chapter) => chapter.id);
+
     const updateQuery: Record<string, any> = {};
 
     // Thêm
     if (payload.add && payload.add.length > 0) {
-      const setOps: Record<string, any> = {};
-      payload.add.forEach((chapter) => {
-        setOps[`content.${chapter.id}`] = {
+      const chaptersToAdd = payload.add.map((chapter) => {
+        if (chapterIds.includes(chapter.id)) return;
+        return {
           id: new Types.ObjectId(chapter.id),
           name: chapter.name,
-          lessons: {},
+          lessons: [],
         };
       });
 
-      updateQuery['$set'] = setOps;
+      updateQuery['$push'] = {
+        chapters: { $each: chaptersToAdd },
+      };
     }
 
     // Xoá
     if (payload.del && payload.del.length > 0) {
-      const unsetOps: Record<string, any> = {};
-      payload.del.forEach((chapterId) => {
-        unsetOps[`content.${chapterId}`] = 1;
-      });
-
-      updateQuery['$unset'] = unsetOps;
+      updateQuery['$pull'] = {
+        chpaters: {
+          id: { $in: payload.del.map((id) => new Types.ObjectId(id)) },
+        },
+      };
     }
 
-    if (!updateQuery.$set && !updateQuery.$unset) {
+    if (!updateQuery.$push && !updateQuery.$pull) {
       return false;
     }
 
@@ -73,13 +80,25 @@ export class DraftsRepository implements IDraftsRepository {
   }
 
   async updateLessons(payload: UpdateLessonsEntity): Promise<boolean> {
+    const draft = await this.getDraft(payload.draftId);
+
+    if (!draft) throw new NotFoundException('Bản nháp không tồn tại');
+
+    const curChapter = draft.chapters.find(
+      (chapter) => chapter.id === payload.chapterId,
+    );
+    if (!curChapter)
+      throw new NotFoundException('Chương không tồn tại trong bản nháp');
+
+    const curLessonIds = curChapter.lessons.map((lesson) => lesson.id);
+
     const updateQuery: Record<string, any> = {};
 
     // Thêm
     if (payload.add && payload.add.length > 0) {
-      const setOps: Record<string, any> = {};
-      payload.add.forEach((lesson) => {
-        setOps[`content.${payload.chapterId}.lessons.${lesson.id}`] = {
+      const lessonsToAdd = payload.add.map((lesson) => {
+        if (curLessonIds.includes(lesson.id)) return;
+        return {
           id: new Types.ObjectId(lesson.id),
           name: lesson.name,
           matrix: {},
@@ -87,27 +106,28 @@ export class DraftsRepository implements IDraftsRepository {
         };
       });
 
-      updateQuery['$set'] = setOps;
+      updateQuery['$push'] = {
+        'chapters.$.lessons': { $each: lessonsToAdd },
+      };
     }
 
     // Xoá
     if (payload.del && payload.del.length > 0) {
-      const unsetOps: Record<string, any> = {};
-      payload.del.forEach((lessonId) => {
-        unsetOps[`content.${payload.chapterId}.lessons.${lessonId}`] = 1;
-      });
-
-      updateQuery['$unset'] = unsetOps;
+      updateQuery['$pull'] = {
+        'chapters.$.lessons': {
+          id: { $in: payload.del.map((id) => new Types.ObjectId(id)) },
+        },
+      };
     }
 
-    if (!updateQuery.$set && !updateQuery.$unset) {
+    if (!updateQuery.$push && !updateQuery.$pull) {
       return false;
     }
 
     const result = await this.draftModel.updateOne(
       {
         _id: payload.draftId,
-        [`content.${payload.chapterId}`]: { $exists: true },
+        'chapters.id': new Types.ObjectId(payload.chapterId),
       },
       updateQuery,
     );
