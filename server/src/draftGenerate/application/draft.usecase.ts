@@ -7,14 +7,18 @@ import {
 } from './dto/draft.dto';
 import {
   DraftEntity,
+  LessonDraft,
   UpdateChaptersEntity,
   UpdateLessonsEntity,
+  UpdateMatrixDetailsEntity,
   UpdateMatrixEntity,
 } from '../domain/entities/draft.entity';
 import { CategoriesServices } from 'src/categories/application/services/category.services';
-import generateMatrixUtil from './utils/generateMatrix';
+import generateMatrixUtil from './utils/GenerateMatrix/generateMatrix';
 import { LessonDataEntity } from 'src/categories/domain/entities/category.entity';
-import matrixQuestionsCount from './utils/MatrixQuestionsCount';
+import matrixQuestionsCount from './utils/GenerateMatrix/matrixQuestionsCount';
+import { generateMatrixDetailsUtil } from './utils/GenerateMatrixDetails/generateMatrixDetails';
+import matrixDetailsQuestionsCount from './utils/GenerateMatrixDetails/matrixDetailsQuestionsCount';
 
 @Injectable()
 export class DraftsUsecase {
@@ -64,6 +68,8 @@ export class DraftsUsecase {
 
     if (!draft) throw new NotFoundException('Bản nháp không tồn tại');
 
+    if (matrixQuestionsCount(draft.chapters, draft.questionsCount)) return true;
+
     const chapterIds = draft.chapters.map((chapter) => chapter.id);
     const categories = await this.CategoriesServices.getByIds(chapterIds);
     const cateMap = new Map(categories.map((chapter) => [chapter.id, chapter]));
@@ -107,9 +113,44 @@ export class DraftsUsecase {
         );
       });
     });
+    return this.repo.updateMatrix(payload);
+  }
 
-    const newDraft = { ...draft, chapters: newDraftChapters };
-    console.log(matrixQuestionsCount(newDraft.chapters));
-    return true;
+  async generateMatrixDetails(draftId: string): Promise<boolean> {
+    const draft = await this.repo.getDraft(draftId);
+    if (!draft) throw new NotFoundException('Bản nháp không tồn tại');
+
+    if (matrixDetailsQuestionsCount(draft.chapters, draft.questionsCount)) {
+      return true;
+    }
+
+    const chapterIds = draft.chapters.map((chapter) => chapter.id);
+    const categories = await this.CategoriesServices.getByIds(chapterIds);
+
+    const allDraftLessons: LessonDraft[] = [];
+    draft.chapters.forEach((chapter) => {
+      allDraftLessons.push(...chapter.lessons);
+    });
+
+    generateMatrixDetailsUtil(categories, allDraftLessons);
+
+    const payload: UpdateMatrixDetailsEntity[] = [];
+
+    draft.chapters.forEach((chapter) => {
+      chapter.lessons.forEach((lesson) => {
+        if (lesson.matrixDetails && lesson.matrixDetails.length > 0) {
+          payload.push(
+            new UpdateMatrixDetailsEntity({
+              draftId: draft.id!,
+              chapterId: chapter.id,
+              lessonId: lesson.id,
+              matrixDetails: lesson.matrixDetails,
+            }),
+          );
+        }
+      });
+    });
+
+    return await this.repo.updateMatrixDetails(payload);
   }
 }

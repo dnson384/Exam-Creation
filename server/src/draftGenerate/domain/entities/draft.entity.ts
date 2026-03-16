@@ -1,14 +1,22 @@
+export class MatrixItem {
+  questionType: string;
+  difficultyLevel: string;
+  selectedCount: number;
+}
+
+export class MatrixDetailItem {
+  exerciseType: string;
+  difficultyLevel: string;
+  learningOutcome: string;
+  questionType: string;
+  selectedCount: number;
+}
+
 export class LessonDraft {
   id: string;
   name: string;
-  matrix: { [questionType: string]: { [level: string]: number } };
-  matrixDetails: {
-    [level: string]: {
-      [outcome: string]: {
-        [questionType: string]: number;
-      };
-    };
-  };
+  matrix: MatrixItem[];
+  matrixDetails: MatrixDetailItem[];
 }
 
 export class ChapterDraft {
@@ -73,9 +81,20 @@ export class UpdateMatrixEntity {
   draftId: string;
   chapterId: string;
   lessonId: string;
-  matrix: { [excerciseType: string]: { [level: string]: number } };
+  matrix: MatrixItem[];
 
   constructor(props: Partial<UpdateMatrixEntity>) {
+    Object.assign(this, props);
+  }
+}
+
+export class UpdateMatrixDetailsEntity {
+  draftId: string;
+  chapterId: string;
+  lessonId: string;
+  matrixDetails: MatrixDetailItem[];
+
+  constructor(props: Partial<UpdateMatrixDetailsEntity>) {
     Object.assign(this, props);
   }
 }

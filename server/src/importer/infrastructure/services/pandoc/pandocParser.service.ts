@@ -18,8 +18,10 @@ import {
   NewQuestionImporterDTO,
   LessonDataImporterDTO,
   NewCategoryImporterDTO,
+  BankStatDTO,
 } from 'src/importer/application/dtos/parse-docx.dto';
 import { ParsedDataOutput } from 'src/importer/application/dtos/parse-docx.dto';
+import { isArrayEqual } from './utils/isArrayEqual';
 
 const pandoc = require('node-pandoc-promise');
 
@@ -78,12 +80,17 @@ export class PandocParserService implements IFileParser {
         options: [],
       });
 
+      let initialBankStat = (): BankStatDTO => ({
+        exerciseType: '',
+        difficultyLevels: [],
+        learningOutcomes: [],
+        questionType: '',
+        count: 1,
+      });
+
       let initialLessonData = (name: string): LessonDataImporterDTO => ({
         name: name,
-        exerciseTypes: {},
-        difficultyLevels: {},
-        learningOutcomes: {},
-        questionTypes: {},
+        bankStats: [],
       });
 
       let chapter: string = '';
@@ -110,6 +117,8 @@ export class PandocParserService implements IFileParser {
       categoryRes.chapter = chapter;
       categoryRes.lessons.push(initialLessonData(lesson));
 
+      let tempBankStat: BankStatDTO = initialBankStat();
+
       html.forEach((element) => {
         const title = element.t;
         const content = element.c;
@@ -123,76 +132,58 @@ export class PandocParserService implements IFileParser {
             questionsRes.push(initialQuestionRes());
             questionsRes[questionsRes.length - 1].exerciseType = text;
 
-            let exerciseTypeCount = 1;
-            const exerciseTypes =
-              categoryRes.lessons[categoryRes.lessons.length - 1].exerciseTypes;
-
-            if (Object.keys(exerciseTypes).includes(text)) {
-              exerciseTypeCount = exerciseTypes[text] + 1;
-            } else {
-              exerciseTypeCount = 1;
-            }
-
-            categoryRes.lessons[categoryRes.lessons.length - 1].exerciseTypes[
-              text
-            ] = exerciseTypeCount;
+            tempBankStat.exerciseType = text;
           }
           // Độ khó
           else if (level === 2) {
             questionsRes[questionsRes.length - 1].difficultyLevel = text;
 
-            let difficultyLevelCount = 1;
-            const difficultyLevels =
-              categoryRes.lessons[categoryRes.lessons.length - 1]
-                .difficultyLevels;
-
-            if (Object.keys(difficultyLevels).includes(text)) {
-              difficultyLevelCount = difficultyLevels[text] + 1;
-            } else {
-              difficultyLevelCount = 1;
-            }
-
-            categoryRes.lessons[categoryRes.lessons.length - 1].difficultyLevels[
-              text
-            ] = difficultyLevelCount;
+            tempBankStat.difficultyLevels.push(text);
           }
           // Yêu cầu cần đạt
           else if (level === 3) {
             questionsRes[questionsRes.length - 1].learningOutcomes.push(text);
 
-            let learningOutcomeCount = 1;
-            const learningOutcomes =
-              categoryRes.lessons[categoryRes.lessons.length - 1]
-                .learningOutcomes;
-
-            if (Object.keys(learningOutcomes).includes(text)) {
-              learningOutcomeCount = learningOutcomes[text] + 1;
-            } else {
-              learningOutcomeCount = 1;
-            }
-
-            categoryRes.lessons[
-              categoryRes.lessons.length - 1
-            ].learningOutcomes[text] = learningOutcomeCount;
+            tempBankStat.learningOutcomes.push(text);
           } else if (level === 4) {
             questionsRes[questionsRes.length - 1].questionType = text;
 
-            let questionTypeCount = 1;
-            const questionTypes =
-              categoryRes.lessons[categoryRes.lessons.length - 1]
-                .questionTypes;
+            tempBankStat.questionType = text;
+          }
 
-            if (Object.keys(questionTypes).includes(text)) {
-              questionTypeCount = questionTypes[text] + 1;
+          const isFillTemp =
+            tempBankStat.exerciseType.trim().length > 0 &&
+            tempBankStat.difficultyLevels.length > 0 &&
+            tempBankStat.learningOutcomes.length > 0 &&
+            tempBankStat.questionType.trim().length > 0;
+
+          if (isFillTemp) {
+            const curStatIndex = categoryRes.lessons[0].bankStats.findIndex(
+              (stat) => {
+                return (
+                  stat.exerciseType === tempBankStat.exerciseType &&
+                  isArrayEqual(
+                    stat.difficultyLevels,
+                    tempBankStat.difficultyLevels,
+                  ) &&
+                  isArrayEqual(
+                    stat.learningOutcomes,
+                    tempBankStat.learningOutcomes,
+                  ) &&
+                  stat.questionType === tempBankStat.questionType
+                );
+              },
+            );
+
+            if (curStatIndex < 0) {
+              categoryRes.lessons[0].bankStats.push(tempBankStat);
             } else {
-              questionTypeCount = 1;
+              categoryRes.lessons[0].bankStats[curStatIndex].count += 1;
             }
-
-            categoryRes.lessons[
-              categoryRes.lessons.length - 1
-            ].questionTypes[text] = questionTypeCount;
+            tempBankStat = initialBankStat();
           }
         }
+
         // Question
         else if (title === 'Para') {
           ExtractPara(

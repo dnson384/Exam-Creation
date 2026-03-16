@@ -3,6 +3,25 @@ import { HydratedDocument, Types } from 'mongoose';
 
 export type CategoriesDocument = HydratedDocument<Categories>;
 
+@Schema({ _id: false })
+export class BankStatSch {
+  @Prop({ type: String, required: true })
+  exerciseType: string;
+
+  @Prop({ type: [String], required: true })
+  difficultyLevels: string[];
+
+  @Prop({ type: [String], required: true })
+  learningOutcomes: string[];
+
+  @Prop({ type: String, required: true })
+  questionType: string;
+
+  @Prop({ type: Number, required: true, default: 0 })
+  count: number;
+}
+const BankStatSchema = SchemaFactory.createForClass(BankStatSch);
+
 @Schema({ _id: true })
 export class LessonDataSch {
   _id: Types.ObjectId;
@@ -10,17 +29,8 @@ export class LessonDataSch {
   @Prop({ required: true })
   name: string;
 
-  @Prop({ type: Object, default: {} })
-  exerciseTypes: Record<string, number>;
-
-  @Prop({ type: Object, default: {} })
-  difficultyLevels: Record<string, number>;
-
-  @Prop({ type: Object, default: {} })
-  learningOutcomes: Record<string, number>;
-
-  @Prop({ type: Object, default: {} })
-  questionTypes: Record<string, number>;
+  @Prop({ type: [BankStatSchema], default: [] })
+  bankStats: BankStatSch[];
 }
 const LessonDataSchema = SchemaFactory.createForClass(LessonDataSch);
 

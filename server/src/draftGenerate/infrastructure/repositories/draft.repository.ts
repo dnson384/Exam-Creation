@@ -7,6 +7,7 @@ import {
   DraftEntity,
   UpdateChaptersEntity,
   UpdateLessonsEntity,
+  UpdateMatrixDetailsEntity,
   UpdateMatrixEntity,
 } from 'src/draftGenerate/domain/entities/draft.entity';
 import { DraftMapper } from '../mappers/draft.mapper';
@@ -44,14 +45,15 @@ export class DraftsRepository implements IDraftsRepository {
 
     // Thêm
     if (payload.add && payload.add.length > 0) {
-      const chaptersToAdd = payload.add.map((chapter) => {
-        if (chapterIds.includes(chapter.id)) return;
-        return {
-          id: new Types.ObjectId(chapter.id),
-          name: chapter.name,
-          lessons: [],
-        };
-      });
+      const chaptersToAdd = payload.add
+        .filter((chapter) => !chapterIds.includes(chapter.id))
+        .map((chapter) => {
+          return {
+            id: new Types.ObjectId(chapter.id),
+            name: chapter.name,
+            lessons: [],
+          };
+        });
 
       updateQuery['$push'] = {
         chapters: { $each: chaptersToAdd },
@@ -61,7 +63,7 @@ export class DraftsRepository implements IDraftsRepository {
     // Xoá
     if (payload.del && payload.del.length > 0) {
       updateQuery['$pull'] = {
-        chpaters: {
+        chapters: {
           id: { $in: payload.del.map((id) => new Types.ObjectId(id)) },
         },
       };
@@ -96,15 +98,16 @@ export class DraftsRepository implements IDraftsRepository {
 
     // Thêm
     if (payload.add && payload.add.length > 0) {
-      const lessonsToAdd = payload.add.map((lesson) => {
-        if (curLessonIds.includes(lesson.id)) return;
-        return {
-          id: new Types.ObjectId(lesson.id),
-          name: lesson.name,
-          matrix: {},
-          matrixDetails: {},
-        };
-      });
+      const lessonsToAdd = payload.add
+        .filter((lesson) => !curLessonIds.includes(lesson.id))
+        .map((lesson) => {
+          return {
+            id: new Types.ObjectId(lesson.id),
+            name: lesson.name,
+            matrix: [],
+            matrixDetails: [],
+          };
+        });
 
       updateQuery['$push'] = {
         'chapters.$.lessons': { $each: lessonsToAdd },
@@ -143,10 +146,37 @@ export class DraftsRepository implements IDraftsRepository {
         },
         update: {
           $set: {
-            [`content.${item.chapterId}.lessons.${item.lessonId}.matrix`]:
-              item.matrix,
+            [`chapters.$[chapter].lessons.$[lesson].matrix`]: item.matrix,
           },
         },
+        arrayFilters: [
+          { 'chapter.id': new Types.ObjectId(item.chapterId) },
+          { 'lesson.id': new Types.ObjectId(item.lessonId) },
+        ],
+      },
+    }));
+
+    await this.draftModel.bulkWrite(query);
+    return true;
+  }
+
+  async updateMatrixDetails(
+    payload: UpdateMatrixDetailsEntity[],
+  ): Promise<boolean> {
+    const query = payload.map((item) => ({
+      updateOne: {
+        filter: {
+          _id: new Types.ObjectId(item.draftId),
+        },
+        update: {
+          $set: {
+            [`chapters.$[chapter].lessons.$[lesson].matrixDetails`]: item.matrixDetails,
+          },
+        },
+        arrayFilters: [
+          { 'chapter.id': new Types.ObjectId(item.chapterId) },
+          { 'lesson.id': new Types.ObjectId(item.lessonId) },
+        ],
       },
     }));
 

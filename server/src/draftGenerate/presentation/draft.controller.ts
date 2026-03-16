@@ -53,8 +53,13 @@ export class DraftController {
     return await this.usecase.updateLessons(dto);
   }
 
-  @Put("generate-matrix")
+  @Put('generate-matrix')
   async generateMatrix(@Query('draftId') draftId: string) {
-    return await this.usecase.generateMatrix(draftId)
+    return await this.usecase.generateMatrix(draftId);
+  }
+
+  @Put('generate-matrix-details')
+  async generateMatrixDetails(@Query('draftId') draftId: string) {
+    return await this.usecase.generateMatrixDetails(draftId);
   }
 }

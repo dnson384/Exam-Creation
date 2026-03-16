@@ -1,3 +1,5 @@
+import { LessonDataEntity } from 'src/categories/domain/entities/category.entity';
+
 export interface CreateDraftDTO {
   questionsCount: number;
   questionTypes: string[];
@@ -38,4 +40,11 @@ export interface UpdateLessonsDraftPayloadDTO {
   chapterId: string;
   add: UpdateChapterParamPayloadDTO[];
   del: string[];
+}
+
+export interface FlattenLesson {
+  lessonId: string;
+  chapterId: string;
+  questionTypes: Record<string, number>;
+  difficultyLevels: Record<string, number>;
 }

@@ -1,7 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { IFileParser } from './ports/file-parser.port';
 import { NewQuestionDTO } from 'src/questions/application/dtos/questions.dto';
-import { NewCategoryDTO } from 'src/categories/application/dto/category.dto';
+import {
+  NewCategoryDTO,
+  newLessonDataDTO,
+} from 'src/categories/application/dto/category.dto';
 import { QuestionsServices } from 'src/questions/application/services/questions.services';
 import { CategoriesServices } from 'src/categories/application/services/category.services';
 

@@ -1,5 +1,9 @@
 import { Injectable } from '@nestjs/common';
-import { CategoriesResponseDTO } from './dto/category.dto';
+import {
+  BankStatDTO,
+  CategoriesResponseDTO,
+  LessonDataDTO,
+} from './dto/category.dto';
 import { ICategoriesRepository } from '../domain/repositories/category.repository';
 
 @Injectable()
@@ -13,14 +17,21 @@ export class CategoriesUseCase {
         id: category.id!,
         subject: category.subject,
         chapter: category.chapter,
-        lessons: category.lessons.map((lesson) => ({
-          id: lesson.id!,
-          name: lesson.name,
-          exerciseTypes: lesson.exerciseTypes,
-          difficultyLevels: lesson.difficultyLevels,
-          learningOutcomes: lesson.learningOutcomes,
-          questionTypes: lesson.questionTypes,
-        })),
+        lessons: category.lessons.map(
+          (lesson): LessonDataDTO => ({
+            id: lesson.id!,
+            name: lesson.name,
+            bankStats: lesson.bankStats.map(
+              (stat): BankStatDTO => ({
+                exerciseType: stat.exerciseType,
+                difficultyLevels: stat.difficultyLevels,
+                learningOutcomes: stat.learningOutcomes,
+                questionType: stat.questionType,
+                count: stat.count,
+              }),
+            ),
+          }),
+        ),
       }),
     );
     return categoriesDTO;

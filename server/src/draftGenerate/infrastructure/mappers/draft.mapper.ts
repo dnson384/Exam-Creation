@@ -22,6 +22,7 @@ export class DraftMapper {
         matrix: lesson.matrix,
         matrixDetails: lesson.matrixDetails,
       }));
+
       return {
         id: chapter.id.toString(),
         name: chapter.name,

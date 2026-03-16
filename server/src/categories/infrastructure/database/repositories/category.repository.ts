@@ -32,12 +32,50 @@ export class CategoriesRepository implements ICategoriesRepository {
       };
     }
 
-    const isExistedLesson = existedChapter.lessons.some(
+    const existingLessonIndex = existedChapter.lessons.findIndex(
       (lesson) => lesson.name === category.lessons[0].name,
     );
-    if (!isExistedLesson) {
+
+    let targetLessonId: string;
+
+    if (existingLessonIndex === -1) {
+      // Bài chưa tồn tại -> Thêm mới vào chương
       existedChapter.lessons.push(categorySchema.lessons![0]);
       await existedChapter.save();
+
+      targetLessonId =
+        existedChapter.lessons[
+          existedChapter.lessons.length - 1
+        ]._id.toString();
+    } else {
+      const existingLesson = existedChapter.lessons[existingLessonIndex];
+      const newBankStats = categorySchema.lessons![0].bankStats;
+
+      if (newBankStats && newBankStats.length > 0) {
+        newBankStats.forEach((newStat) => {
+          const existingStat = existingLesson.bankStats.find((oldStat) => {
+            return (
+              oldStat.exerciseType === newStat.exerciseType &&
+              oldStat.questionType === newStat.questionType &&
+              JSON.stringify(oldStat.difficultyLevels) ===
+                JSON.stringify(newStat.difficultyLevels) &&
+              JSON.stringify(oldStat.learningOutcomes) ===
+                JSON.stringify(newStat.learningOutcomes)
+            );
+          });
+
+          if (existingStat) {
+            existingStat.count += newStat.count;
+          } else {
+            existingLesson.bankStats.push(newStat);
+          }
+        });
+
+        existedChapter.markModified(`lessons.${existingLessonIndex}.bankStats`);
+        await existedChapter.save();
+      }
+
+      targetLessonId = existingLesson._id.toString();
     }
     return {
       chapterId: existedChapter._id.toString(),

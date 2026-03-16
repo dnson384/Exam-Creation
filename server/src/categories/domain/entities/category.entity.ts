@@ -1,17 +1,19 @@
+export class BankStatEntity {
+  exerciseType: string;
+  difficultyLevels: string[];
+  learningOutcomes: string[];
+  questionType: string;
+  count: number;
+}
+
 export class LessonDataEntity {
   id?: string;
   name: string;
-  exerciseTypes: { [name: string]: number };
-  difficultyLevels: { [name: string]: number };
-  learningOutcomes: { [name: string]: number };
-  questionTypes: { [name: string]: number };
+  bankStats: BankStatEntity[];
 
   constructor(props: Partial<LessonDataEntity>) {
     Object.assign(this, props);
-    if (!this.exerciseTypes) this.exerciseTypes = {};
-    if (!this.difficultyLevels) this.difficultyLevels = {};
-    if (!this.learningOutcomes) this.learningOutcomes = {};
-    if (!this.questionTypes) this.questionTypes = {};
+    if (!this.bankStats) this.bankStats = [];
   }
 }
 

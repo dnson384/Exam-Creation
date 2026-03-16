@@ -3,6 +3,39 @@ import { HydratedDocument, SchemaTypes, Types } from 'mongoose';
 
 export type DraftDocument = HydratedDocument<Drafts>;
 
+@Schema({ _id: false })
+export class MatrixItemSch {
+  @Prop({ type: String, required: true })
+  questionType: string;
+
+  @Prop({ type: String, required: true })
+  difficultyLevel: string;
+
+  @Prop({ type: Number, required: true })
+  selectedCount: number;
+}
+const MatrixItemSchema = SchemaFactory.createForClass(MatrixItemSch);
+
+@Schema({ _id: false })
+export class MatrixDetailItemSch {
+  @Prop({ type: String, required: true })
+  exerciseType: string;
+
+  @Prop({ type: String, required: true })
+  difficultyLevel: string;
+
+  @Prop({ type: String, required: true })
+  learningOutcome: string;
+
+  @Prop({ type: String, required: true })
+  questionType: string;
+
+  @Prop({ type: Number, required: true })
+  selectedCount: number;
+}
+const MatrixDetailItemSchema =
+  SchemaFactory.createForClass(MatrixDetailItemSch);
+
 @Schema({ _id: false, minimize: false })
 export class LessonDraftSch {
   @Prop({
@@ -14,11 +47,11 @@ export class LessonDraftSch {
   @Prop({ required: true })
   name: string;
 
-  @Prop({ type: Object, default: {} })
-  matrix: Record<string, Record<string, number>>;
+  @Prop({ type: [MatrixItemSchema], default: [] })
+  matrix: MatrixItemSch[];
 
-  @Prop({ type: Object, default: {} })
-  matrixDetails: Record<string, Record<string, Record<string, number>>>;
+  @Prop({ type: [MatrixDetailItemSchema], default: [] })
+  matrixDetails: MatrixDetailItemSch[];
 }
 const LessonDraftSchema = SchemaFactory.createForClass(LessonDraftSch);
 

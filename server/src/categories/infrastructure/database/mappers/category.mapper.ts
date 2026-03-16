@@ -1,9 +1,9 @@
 import { Types } from 'mongoose';
+import { Categories, CategoriesDocument } from '../schemas/category.schemas';
 import {
-  Categories,
-  CategoriesDocument,
-} from '../schemas/category.schemas';
-import { CategoryEntity, LessonDataEntity } from 'src/categories/domain/entities/category.entity';
+  CategoryEntity,
+  LessonDataEntity,
+} from 'src/categories/domain/entities/category.entity';
 
 export class CategoryMapper {
   static toDomain(raw: CategoriesDocument): CategoryEntity {
@@ -16,10 +16,7 @@ export class CategoryMapper {
           new LessonDataEntity({
             id: lesson._id.toString(),
             name: lesson.name,
-            exerciseTypes: lesson.exerciseTypes,
-            difficultyLevels: lesson.difficultyLevels,
-            learningOutcomes: lesson.learningOutcomes,
-            questionTypes: lesson.questionTypes,
+            bankStats: lesson.bankStats,
           }),
       ),
     });
@@ -32,10 +29,7 @@ export class CategoryMapper {
       lessons: entity.lessons.map((lesson) => ({
         _id: lesson.id ? new Types.ObjectId(lesson.id) : new Types.ObjectId(),
         name: lesson.name,
-        exerciseTypes: lesson.exerciseTypes,
-        difficultyLevels: lesson.difficultyLevels,
-        learningOutcomes: lesson.learningOutcomes,
-        questionTypes: lesson.questionTypes,
+        bankStats: lesson.bankStats,
       })),
     };
   }

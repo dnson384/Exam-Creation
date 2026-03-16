@@ -2,6 +2,7 @@ import {
   DraftEntity,
   UpdateChaptersEntity,
   UpdateLessonsEntity,
+  UpdateMatrixDetailsEntity,
   UpdateMatrixEntity,
 } from '../entities/draft.entity';
 
@@ -11,4 +12,7 @@ export abstract class IDraftsRepository {
   abstract updateChapters(payload: UpdateChaptersEntity): Promise<boolean>;
   abstract updateLessons(payload: UpdateLessonsEntity): Promise<boolean>;
   abstract updateMatrix(payload: UpdateMatrixEntity[]): Promise<boolean>;
+  abstract updateMatrixDetails(
+    payload: UpdateMatrixDetailsEntity[],
+  ): Promise<boolean>;
 }
