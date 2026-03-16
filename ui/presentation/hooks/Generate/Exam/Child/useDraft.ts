@@ -22,7 +22,7 @@ export default function useDraft() {
     id: "",
     questionsCount: 0,
     questionTypes: [],
-    content: {},
+    chapters: [],
   };
 
   const results = useQueries({
@@ -32,6 +32,7 @@ export default function useDraft() {
         queryFn: () => GetDraft(draftId),
         staleTime: 1000 * 60 * 5,
         retry: false,
+        refetchOnMount: true,
         refetchOnWindowFocus: false,
         enabled: !!draftId,
       },
@@ -65,11 +66,11 @@ export default function useDraft() {
   ]);
 
   useEffect(() => {
-    if (draft !== initalDraftEntity && Object.keys(draft.content).length > 0) {
+    if (draft !== initalDraftEntity && draft.chapters.length > 0) {
       setSelectedChapters(
-        Object.values(draft.content).map((value) => ({
-          id: value.id,
-          name: value.name,
+        Object.values(draft.chapters).map((chapter) => ({
+          id: chapter.id,
+          name: chapter.name,
         })),
       );
     }
@@ -106,18 +107,18 @@ export default function useDraft() {
       del: [],
     };
 
-    const prevChapters = Object.keys(draft.content);
+    const prevChapterIds = draft.chapters.map((chapter) => chapter.id);
 
     // Thêm chương
     selectedChapters.forEach((chapter) => {
-      if (!prevChapters.includes(chapter.id)) {
+      if (!prevChapterIds.includes(chapter.id) && chapter.id) {
         payload.add.push(chapter);
       }
     });
 
     // Xoá chương
     const selectedChaptersId = selectedChapters.map((chapter) => chapter.id);
-    prevChapters.forEach((chapterId) => {
+    prevChapterIds.forEach((chapterId) => {
       if (!selectedChaptersId.includes(chapterId)) {
         payload.del.push(chapterId);
       }

@@ -51,4 +51,30 @@ export class DraftRepositoryImpl implements IDraftRepository {
     );
     return data;
   }
+
+  async generateMatrix(draftId: string): Promise<boolean> {
+    const { data } = await axios.put<boolean>(
+      `${this.baseUrl}/draft/generate-matrix`,
+      {},
+      {
+        params: {
+          draftId: draftId,
+        },
+      },
+    );
+    return data;
+  }
+
+  async generateMatrixDetails(draftId: string): Promise<boolean> {
+    const { data } = await axios.put<boolean>(
+      `${this.baseUrl}/draft/generate-matrix-details`,
+      {},
+      {
+        params: {
+          draftId: draftId,
+        },
+      },
+    );
+    return data;
+  }
 }

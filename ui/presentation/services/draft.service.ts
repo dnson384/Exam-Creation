@@ -37,7 +37,30 @@ export async function UpdateLessons(payload: UpdateLessonssDraftPayload) {
   return response.data;
 }
 
-export async function GenerateMatrix(paylaod: any) {
-  console.log(paylaod);
-  return true;
+export async function GenerateMatrix(draftId: string): Promise<boolean> {
+  const response = await axios.put<boolean>(
+    `/api/draft/generate-matrix`,
+    {},
+    {
+      params: {
+        draftId: draftId,
+      },
+    },
+  );
+
+  return response.data;
+}
+
+export async function GenerateMatrixDetails(draftId: string): Promise<boolean> {
+  const response = await axios.put<boolean>(
+    `/api/draft/generate-matrix-details`,
+    {},
+    {
+      params: {
+        draftId: draftId,
+      },
+    },
+  );
+
+  return response.data;
 }

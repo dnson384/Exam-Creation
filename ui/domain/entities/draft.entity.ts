@@ -3,32 +3,38 @@ export interface CreateDraftPayloadEntity {
   questionTypes: string[];
 }
 
+export interface MatrixItems {
+  questionType: string;
+  difficultyLevel: string;
+  selectedCount: number;
+}
+
+export interface MatrixDetailsItems {
+  exerciseType: string;
+  difficultyLevel: string;
+  learningOutcome: string;
+  questionType: string;
+  selectedCount: number;
+}
+
 export interface LessonDraft {
   id: string;
   name: string;
-  matrix: { [questionType: string]: { [level: string]: number } };
-  matrixDetails: {
-    [level: string]: {
-      [outcome: string]: {
-        [questionType: string]: number;
-      };
-    };
-  };
+  matrix: MatrixItems[];
+  matrixDetails: MatrixDetailsItems[];
 }
 
 export interface ChapterDraft {
   id: string;
   name: string;
-  lessons: { [lessonId: string]: LessonDraft };
+  lessons: LessonDraft[];
 }
 
 export interface DraftEntity {
   id: string;
   questionsCount: number;
   questionTypes: string[];
-  content: {
-    [chapterId: string]: ChapterDraft;
-  };
+  chapters: ChapterDraft[];
   createAt?: Date;
   expiredAt?: Date;
 }

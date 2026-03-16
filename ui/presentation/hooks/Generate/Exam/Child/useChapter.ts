@@ -27,16 +27,17 @@ export default function useChapter() {
     id: "",
     questionsCount: 0,
     questionTypes: [],
-    content: {},
+    chapters: [],
   };
 
   const results = useQueries({
     queries: [
       {
-        queryKey: ["draft", draftId],
+        queryKey: ["draft", draftId, chapterId],
         queryFn: () => GetDraft(draftId),
         staleTime: 1000 * 60 * 5,
         retry: false,
+        refetchOnMount: true,
         refetchOnWindowFocus: false,
         enabled: !!draftId,
       },
@@ -82,7 +83,9 @@ export default function useChapter() {
   ]);
 
   useEffect(() => {
-    const draftLessons = draft.content[chapterId]?.lessons;
+    const draftLessons = draft.chapters.find(
+      (chapter) => chapter.id === chapterId,
+    )?.lessons;
     if (draftLessons && Object.keys(draftLessons).length > 0) {
       setSelectedLessons(
         Object.values(draftLessons).map((lesson) => ({
@@ -117,25 +120,29 @@ export default function useChapter() {
       return setErrorMessage("Vui lòng chọn nội dung");
     }
 
-    const prevLessons = Object.keys(draft.content[chapterId]?.lessons);
-    if (!prevLessons) {
-      return setErrorMessage("Chương hiện tại chưa tồn tại trong bản nháp");
-    }
-
     // Tiếp tục mà không thay đổi
-    const curChapterIndex = Object.keys(draft.content).findIndex(
-      (id) => chapterId === id,
+    const curChapterIndex = draft.chapters.findIndex(
+      (chapter) => chapterId === chapter.id,
     );
 
-    const newChapterId = Object.keys(draft.content)[curChapterIndex + 1];
+    const newChapterId =
+      curChapterIndex < draft.chapters.length - 1
+        ? draft.chapters[curChapterIndex + 1].id
+        : draft.chapters[curChapterIndex].id;
 
     if (
       selectedLessons.length ===
-        Object.keys(draft.content[chapterId]?.lessons).length &&
-      curChapterIndex <
-        Object.keys(draft.content[chapterId]?.lessons).length - 1
+        draft.chapters[curChapterIndex].lessons.length &&
+      curChapterIndex < draft.chapters.length - 1
     ) {
       router.push(`${pathname.replace(chapterId, newChapterId)}`);
+    }
+
+    const prevLessonIds: string[] = draft.chapters[curChapterIndex].lessons.map(
+      (lesson) => lesson.id,
+    );
+    if (!prevLessonIds) {
+      return setErrorMessage("Chương hiện tại chưa tồn tại trong bản nháp");
     }
 
     // Cập nhật nội dung
@@ -148,14 +155,14 @@ export default function useChapter() {
 
     // Thêm bài
     selectedLessons.forEach((chapter) => {
-      if (!prevLessons.includes(chapter.id)) {
+      if (!prevLessonIds.includes(chapter.id)) {
         payload.add.push(chapter);
       }
     });
 
     // Xoá bài
     const selectedLessonsId = selectedLessons.map((chapter) => chapter.id);
-    prevLessons.forEach((chapterId) => {
+    prevLessonIds.forEach((chapterId) => {
       if (!selectedLessonsId.includes(chapterId)) {
         payload.del.push(chapterId);
       }
@@ -166,7 +173,7 @@ export default function useChapter() {
 
     response = await UpdateLessons(payload);
 
-    if (curChapterIndex === Object.keys(draft.content).length - 1) {
+    if (curChapterIndex === draft.chapters.length - 1) {
       response = await GenerateMatrix(draftId);
       if (response) isGenerated = true;
     }
@@ -174,7 +181,7 @@ export default function useChapter() {
     if (response && !isGenerated) {
       router.push(`${pathname.replace(chapterId, newChapterId)}`);
     } else if (response && isGenerated) {
-      console.log("generated");
+      router.push(`${pathname.replace(chapterId, "matrix")}`);
     }
   };
 
@@ -182,6 +189,10 @@ export default function useChapter() {
     if (errorMessage !== null) {
       const timer = setTimeout(() => {
         setErrorMessage(null);
+
+        if (axiosError && axiosError.status === 404) {
+          router.replace("/generate/exam");
+        }
       }, 3000);
 
       return () => clearTimeout(timer);
