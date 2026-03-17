@@ -21,5 +21,12 @@ export class ExamsRepositoryImpl implements IExamsRepository {
     return createdExam._id.toString();
   }
 
-  async
+  async getExamById(examId: string): Promise<any> {
+    const examSch = await this.model
+      .findById(examId)
+      .populate('questions.questionIds')
+      .exec();
+
+    return examSch;
+  }
 }

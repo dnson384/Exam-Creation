@@ -76,4 +76,15 @@ export class QuestionRepository implements IQuestionRepository {
 
     return questionsSch.map((q) => QuestionMapper.toDomain(q));
   }
+
+  async findByIds(ids: string[]): Promise<QuestionEntity[]>{
+    const questionsSch = await this.QuestionModel.find({
+      _id: { $in: ids },
+    });
+    if (questionsSch.length === 0) {
+      throw new NotFoundException('Không tìm thấy câu hỏi nào');
+    }
+
+    return questionsSch.map((q) => QuestionMapper.toDomain(q));
+  }
 }

@@ -1,9 +1,10 @@
 import { Module } from '@nestjs/common';
 import { ExporterController } from './presentation/exporter.controller';
-import { ExporterUsecase } from './application/exporter.usecase';
+import { ExporterService } from './application/services/exporter.service';
 
 @Module({
   controllers: [ExporterController],
-  providers: [ExporterUsecase],
+  providers: [ExporterService],
+  exports: [ExporterService],
 })
 export class ExporterModule {}

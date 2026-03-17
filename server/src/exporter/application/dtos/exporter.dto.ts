@@ -17,3 +17,15 @@ export class WordPayloadDTO {
   title: string;
   questionsSorted: Record<string, QuestionDataDTO[]>;
 }
+
+// Exam Data
+export class QuestionDetailDTO {
+  id: string;
+  question: ContentDTO;
+  options: ContentDTO[];
+}
+
+export class ExamExportDataDTO {
+  questionType: string;
+  questions: QuestionDetailDTO[];
+}

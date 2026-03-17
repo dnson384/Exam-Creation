@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { Transactional } from '@nestjs-cls/transactional';
 
 import { DraftsServices } from 'src/draft/application/services/draft.service';
@@ -7,6 +11,11 @@ import { ExamMatrixDetailDTO } from 'src/questions/application/dtos/exam.dto';
 
 import { IExamsRepository } from '../domain/repositories/exams.repository';
 import { ChapterExamData, ExamEntity } from '../domain/entities/exam.entity';
+import { ExamExportPayloadDTO, ExamReponseDTO } from './dto/exams.dto';
+import { ExamMapper } from './utils/convertToExamResponseDTO';
+import { convertExamDataForExport } from './utils/convertExamDataForExport';
+import { ExamExportDataDTO } from 'src/exporter/application/dtos/exporter.dto';
+import { ExporterService } from 'src/exporter/application/services/exporter.service';
 
 @Injectable()
 export class ExamsUseCase {
@@ -14,6 +23,7 @@ export class ExamsUseCase {
     private readonly repo: IExamsRepository,
     private readonly draftsService: DraftsServices,
     private readonly questionsService: QuestionsServices,
+    private readonly exporterService: ExporterService,
   ) {}
 
   @Transactional()
@@ -66,8 +76,24 @@ export class ExamsUseCase {
     return savedExamId;
   }
 
+  async getExamById(examId: string): Promise<ExamReponseDTO> {
+    const examSch = await this.repo.getExamById(examId);
+    return ExamMapper.toDetailResponseDTO(examSch);
+  }
 
-  async getExamById (examId: string): Promise<any> {
-    
+  async exportWordFile(payload: ExamExportPayloadDTO[]) {
+    const allQuestionIds = payload.flatMap((group) => group.questionIds);
+    if (allQuestionIds.length === 0) {
+      throw new BadRequestException('Không có câu hỏi nào để xuất file');
+    }
+
+    const fullQuestions = await this.questionsService.findByIds(allQuestionIds);
+
+    const exportData: ExamExportDataDTO[] = convertExamDataForExport(
+      payload,
+      fullQuestions,
+    );
+
+    return this.exporterService.generateExamWordFile(exportData);
   }
 }

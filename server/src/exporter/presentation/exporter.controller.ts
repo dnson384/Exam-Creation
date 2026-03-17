@@ -1,12 +1,12 @@
 import { Controller, Post, Body, Res } from '@nestjs/common';
 import type { Response } from 'express';
-import { ExporterUsecase } from '../application/exporter.usecase';
+import { ExporterService } from '../application/services/exporter.service';
 import { ExportPayload } from './schemas/exporter.schema';
 import { WordPayloadDTO } from '../application/dtos/exporter.dto';
 
 @Controller('export')
 export class ExporterController {
-  constructor(private readonly exportService: ExporterUsecase) {}
+  constructor(private readonly exportService: ExporterService) {}
 
   @Post('word')
   async exportToWord(@Body() payload: ExportPayload, @Res() res: Response) {

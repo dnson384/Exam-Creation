@@ -42,7 +42,7 @@ export default function ExtractOptions(
       const normalizedPath = relativePart.split(path.sep).join('/');
       const publicUrl = `/${encodeURI('static/' + normalizedPath)}`;
 
-      variables.image[`<image_${curVarIndex}>`] = publicUrl;
+      variables.image[`image_${curVarIndex}`] = publicUrl;
     } catch (err) {
       console.error(`Lỗi di chuyển ảnh ${rawSrc}:`, err);
     }

@@ -1,14 +1,14 @@
 import axios from 'axios';
-import { QuestionDataDTO } from 'src/exporter/application/dtos/exporter.dto';
+import { QuestionDetailDTO } from 'src/exporter/application/dtos/exporter.dto';
 
 export async function getQuestionImageBuffer(
-  questionsSorted: Record<string, QuestionDataDTO[]>,
+  questionsSorted: QuestionDetailDTO[][],
 ): Promise<Record<string, Buffer>> {
   const BACKEND_URL = process.env.BACKEND_URL;
 
   const uniqueUrls = new Set<string>();
 
-  Object.values(questionsSorted).forEach((questions) => {
+  questionsSorted.forEach((questions) => {
     questions.forEach((q) => {
       const imgVars = q.question.variables.image;
 

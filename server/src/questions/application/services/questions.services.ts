@@ -28,6 +28,10 @@ export class QuestionsServices {
     return await this.repo.saveQuestions(newQuestionsEntity);
   }
 
+  async findByIds(ids: string[]) {
+    return await this.repo.findByIds(ids);
+  }
+
   async generateExamQuestions(
     matrixDetails: ExamMatrixDetailDTO[],
   ): Promise<ExamQuestionsResponseDTO[]> {

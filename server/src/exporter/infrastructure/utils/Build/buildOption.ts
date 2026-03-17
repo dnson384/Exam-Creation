@@ -7,6 +7,7 @@ import {
   Paragraph,
   Table,
   TableCell,
+  TableLayoutType,
   TableRow,
   TextRun,
   VerticalAlign,
@@ -47,7 +48,7 @@ export function BuildOption(
 
   let questionsNode: any[] = [];
 
-  if (questionType === 'Trắc nghiệm') {
+  if (questionType === 'Nhiều lựa chọn') {
     questionsNode.push(
       new TextRun({
         text: `${String.fromCharCode(65 + index)}. `,
@@ -76,7 +77,7 @@ export function BuildOption(
       questionsNode.push(new TextRun(placeholderId));
     }
     // Ảnh
-    else if (part.startsWith('<img_') && part.endsWith('>')) {
+    else if (part.startsWith('<image_') && part.endsWith('>')) {
       if (questionsNode.length > 0) {
         currentQuestion.push(new Paragraph({ children: questionsNode }));
         questionsNode = [];
@@ -120,8 +121,6 @@ export function BuildOption(
 
   if (questionsNode.length > 0) {
     if (questionType === 'Đúng sai') {
-      const boxWidth = 567;
-
       const allBorders = {
         top: { style: BorderStyle.SINGLE, size: 6 },
         bottom: { style: BorderStyle.SINGLE, size: 6 },
@@ -136,9 +135,57 @@ export function BuildOption(
         right: { style: BorderStyle.NONE },
       };
 
+      const rightColumnTable = new Table({
+        width: { size: 100, type: WidthType.PERCENTAGE },
+        layout: TableLayoutType.FIXED,
+        borders: {
+          top: { style: BorderStyle.NONE },
+          bottom: { style: BorderStyle.NONE },
+          left: { style: BorderStyle.NONE },
+          right: { style: BorderStyle.NONE },
+          insideVertical: { style: BorderStyle.NONE },
+          insideHorizontal: { style: BorderStyle.NONE },
+        },
+        rows: [
+          new TableRow({
+            height: { value: 0, rule: HeightRule.AUTO },
+            children: [
+              new TableCell({
+                width: { size: 30, type: WidthType.PERCENTAGE },
+                borders: allBorders,
+                children: [
+                  new Paragraph({
+                    text: 'Đ',
+                    alignment: AlignmentType.CENTER,
+                  }),
+                ],
+                verticalAlign: VerticalAlign.CENTER,
+              }),
+              new TableCell({
+                width: { size: 30, type: WidthType.PERCENTAGE },
+                borders: allBorders,
+                children: [new Paragraph({ text: '' })],
+              }),
+              new TableCell({
+                width: { size: 30, type: WidthType.PERCENTAGE },
+                borders: allBorders,
+                children: [
+                  new Paragraph({
+                    text: 'S',
+                    alignment: AlignmentType.CENTER,
+                  }),
+                ],
+                verticalAlign: VerticalAlign.CENTER,
+              }),
+            ],
+          }),
+        ],
+      });
+
       currentQuestion.push(
         new Table({
           width: { size: 100, type: WidthType.PERCENTAGE },
+          layout: TableLayoutType.FIXED,
           borders: {
             top: { style: BorderStyle.NONE },
             bottom: { style: BorderStyle.NONE },
@@ -149,10 +196,11 @@ export function BuildOption(
           },
           rows: [
             new TableRow({
-              height: { value: 500, rule: HeightRule.ATLEAST },
+              height: { value: 350, rule: HeightRule.ATLEAST },
               children: [
-                // Cột 1
+                // Cột 1: Nội dung
                 new TableCell({
+                  width: { size: 80, type: WidthType.PERCENTAGE },
                   borders: noBorders,
                   children: [
                     new Paragraph({
@@ -162,50 +210,17 @@ export function BuildOption(
                   ],
                   verticalAlign: VerticalAlign.CENTER,
                 }),
-                // Cột 2
                 new TableCell({
-                  width: { size: boxWidth, type: WidthType.DXA },
+                  width: { size: 5, type: WidthType.PERCENTAGE },
                   borders: noBorders,
-                  children: [
-                    new Paragraph({
-                      text: '',
-                      alignment: AlignmentType.CENTER,
-                    }),
-                  ],
-                }),
-                // Cột 3
-                new TableCell({
-                  width: { size: boxWidth, type: WidthType.DXA },
-                  borders: allBorders,
-                  children: [
-                    new Paragraph({
-                      text: 'Đ',
-                      alignment: AlignmentType.CENTER,
-                    }),
-                  ],
+                  children: [new Paragraph({ text: '' })],
                   verticalAlign: VerticalAlign.CENTER,
                 }),
-                // Cột 4
+                // Cột 3: Ô Đ/S
                 new TableCell({
-                  width: { size: boxWidth, type: WidthType.DXA },
-                  borders: allBorders,
-                  children: [
-                    new Paragraph({
-                      text: '',
-                      alignment: AlignmentType.CENTER,
-                    }),
-                  ],
-                }),
-                // Cột 5
-                new TableCell({
-                  width: { size: boxWidth, type: WidthType.DXA },
-                  borders: allBorders,
-                  children: [
-                    new Paragraph({
-                      text: 'S',
-                      alignment: AlignmentType.CENTER,
-                    }),
-                  ],
+                  width: { size: 15, type: WidthType.PERCENTAGE },
+                  borders: noBorders,
+                  children: [rightColumnTable],
                   verticalAlign: VerticalAlign.CENTER,
                 }),
               ],

@@ -9,11 +9,13 @@ import { ExamsUseCase } from './application/exams.usecase';
 import { Exams, ExamsSchema } from './infrastructure/schemas/exam.schema';
 import { ExamsRepositoryImpl } from './infrastructure/repositories/exams.repository';
 import { ExamsController } from './presentation/exams.controller';
+import { ExporterModule } from 'src/exporter/exporter.module';
 
 @Module({
   imports: [
     DraftsModule,
     QuestionsModule,
+    ExporterModule,
     MongooseModule.forFeature([{ name: Exams.name, schema: ExamsSchema }]),
   ],
   controllers: [ExamsController],

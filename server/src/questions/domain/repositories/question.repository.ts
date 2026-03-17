@@ -11,4 +11,5 @@ export abstract class IQuestionRepository {
     lessons: LessonPayloadEntity[],
   ): Promise<any>;
   abstract findByLessonIds(lessonIds: string[]): Promise<QuestionEntity[]>;
+  abstract findByIds(ids: string[]): Promise<QuestionEntity[]>;
 }
