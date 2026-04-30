@@ -36,15 +36,6 @@ export class DraftEntity {
   constructor(props: Partial<DraftEntity>) {
     Object.assign(this, props);
 
-    if (this.questionTypes.length < 3) {
-      this.questionTypes = [
-        'Nhiều lựa chọn',
-        'Đúng sai',
-        'Trả lời ngắn',
-        'Tự luận',
-      ];
-    }
-
     if (!this.chapters) {
       this.chapters = [];
     }
