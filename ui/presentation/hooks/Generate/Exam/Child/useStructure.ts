@@ -11,8 +11,7 @@ export default function useStructure() {
   const [questionTypes, setQuestionTypes] = useState<Record<string, boolean>>({
     "Nhiều lựa chọn": true,
     "Đúng sai": true,
-    "Trả lời ngắn": false,
-    "Tự luận": true,
+    "Trả lời ngắn": true,
   });
 
   const [error, setError] = useState<string | null>(null);
@@ -37,15 +36,8 @@ export default function useStructure() {
       .filter(([_, value]) => value === true)
       .map(([key]) => key);
 
-    if (questionTypesArr.length < 3) {
-      setError("Bắt buộc phải có 3 loại câu hỏi");
-      return;
-    } else if (
-      !questionTypesArr.includes("Nhiều lựa chọn") ||
-      !questionTypesArr.includes("Đúng sai") ||
-      !questionTypesArr.includes("Tự luận")
-    ) {
-      setError("Bắt buộc phải có 3 loại: Nhiều lựa chọn, Đúng sai, Tự luận");
+    if (questionTypesArr.length == 0) {
+      setError("Phải có ít nhất 1 loại câu hỏi");
       return;
     }
 

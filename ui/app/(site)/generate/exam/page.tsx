@@ -82,11 +82,6 @@ export default function GenerateExam() {
                   </label>
                 </div>
               ))}
-
-              <p className="mt-1 text-sm italic text-red-500">
-                * Bắt buộc phải có Nhiều lựa chọn, Đúng sai, Tự luận (Theo công
-                văn 7991)
-              </p>
             </div>
           </div>
         </section>
